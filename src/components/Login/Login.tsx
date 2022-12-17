@@ -1,5 +1,5 @@
 import { Box, Button, TextField } from "@mui/material";
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useRef } from "react";
 
 type LoginProps = {
   onLogin: (name: string, password: string) => void;
@@ -7,14 +7,11 @@ type LoginProps = {
 
 const Login: FC<LoginProps> = ({ onLogin }) => {
   const formRef = useRef<any>();
-  const [hasError, setHasError] = useState(false);
 
   const handleSubmit = useCallback(() => {
     if (formRef?.current) {
       const { userName, password } = formRef.current;
-      userName.value && password.value
-        ? onLogin(userName.value, password.value)
-        : setHasError(true);
+      onLogin(userName.value, password.value);
     }
   }, [onLogin]);
 
