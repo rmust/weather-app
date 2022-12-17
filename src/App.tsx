@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { createTheme, ThemeProvider, Paper, Box, Button } from "@mui/material";
 import Forecasts from "./components/Forecasts";
 import Login from "./components/Login";
