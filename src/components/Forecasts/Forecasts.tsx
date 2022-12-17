@@ -1,5 +1,5 @@
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Endpoint, getRequest } from "../../services/requests";
 import { getQueryParams } from "../../services/utils";
 import CityData from "./CityData";
@@ -16,6 +16,8 @@ type ForecastsProps = {
   token: string;
 };
 
+const FETCH_INTERVAL = 15000;
+
 const Forecasts: FC<ForecastsProps> = ({ token }) => {
   const [cities, setCities] = useState(getQueryParams("cities"));
 
@@ -29,7 +31,7 @@ const Forecasts: FC<ForecastsProps> = ({ token }) => {
         if (error) {
           return;
         }
-        setCities(data);
+        return setCities(data);
       }
     );
     return () => {
@@ -37,7 +39,14 @@ const Forecasts: FC<ForecastsProps> = ({ token }) => {
     };
   }, []);
 
-  const inputRef = useRef();
+  const [intervalId, setIntervalId] = useState<number>();
+
+  useEffect(() => {
+    return () => {
+      intervalId && clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
   const [currentCity, setCurrentCity] = useState();
   const [weather, setWeather] = useState<Weather>();
 
@@ -45,11 +54,17 @@ const Forecasts: FC<ForecastsProps> = ({ token }) => {
     (_event: any, newValue: any) => {
       if (newValue) {
         setCurrentCity(newValue);
-        getRequest(`${Endpoint.WEATHERS}/${newValue}`, token).then(
-          ({ data, error }) => {
-            setWeather(data);
-          }
-        );
+        const id = setInterval(() => {
+          getRequest(`${Endpoint.WEATHERS}/${newValue}`, token).then(
+            ({ data, error }) => {
+              if (error) {
+                return;
+              }
+              return setWeather(data);
+            }
+          );
+        }, FETCH_INTERVAL);
+        setIntervalId(id);
       }
     },
     [token]
@@ -60,18 +75,11 @@ const Forecasts: FC<ForecastsProps> = ({ token }) => {
   return (
     <div>
       <Autocomplete
-        ref={inputRef}
         options={cities}
         renderInput={(params) => <TextField {...params} label="City" />}
         onChange={handleChange}
       />
-      {!isLoading ? (
-        weather ? (
-          <CityData weather={weather} />
-        ) : null
-      ) : (
-        <CircularProgress />
-      )}
+      {!isLoading ? <CityData weather={weather} /> : <CircularProgress />}
     </div>
   );
 };

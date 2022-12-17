@@ -1,17 +1,25 @@
 import { Box, Button, TextField } from "@mui/material";
 import { FC, useCallback, useRef } from "react";
+import { Endpoint, postRequest } from "../../services/requests";
 
 type LoginProps = {
-  onLogin: (name: string, password: string) => void;
+  onLogin: (token: string) => void;
 };
 
 const Login: FC<LoginProps> = ({ onLogin }) => {
   const formRef = useRef<any>();
 
-  const handleSubmit = useCallback(() => {
+  const handleClick = useCallback(async () => {
     if (formRef?.current) {
-      const { userName, password } = formRef.current;
-      onLogin(userName.value, password.value);
+      const { username, password } = formRef.current;
+      const { data, error } = await postRequest(
+        { password: password.value, username: username.value },
+        Endpoint.AUTHORIZE
+      );
+      if (error) {
+        return;
+      }
+      onLogin(data?.token);
     }
   }, [onLogin]);
 
@@ -26,7 +34,7 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
       }}
     >
       <form ref={formRef}>
-        <TextField name="userName" label="Username" variant="outlined" />
+        <TextField name="username" label="Username" variant="outlined" />
         <Box mb={2} mt={2}>
           <TextField
             name="password"
@@ -36,7 +44,7 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
           />
         </Box>
       </form>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button onClick={handleClick} variant="contained">
         Login
       </Button>
     </Box>

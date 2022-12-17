@@ -4,3 +4,11 @@ export const getQueryParams = (query: string): string[] => {
   const result = searchParams.get(query);
   return result?.split(",") || [];
 };
+
+export const getAuthToken = () => {
+  const authToken = localStorage.getItem("authToken");
+  if (authToken) {
+    return authToken;
+  }
+  return undefined;
+};

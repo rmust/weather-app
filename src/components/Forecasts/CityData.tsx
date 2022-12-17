@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Weather } from "./Forecasts";
 
 type CityDataProps = {
-  weather: Weather;
+  weather?: Weather;
 };
 
 const CityData: FC<CityDataProps> = ({ weather }) => {

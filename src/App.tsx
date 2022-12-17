@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { createTheme, ThemeProvider, Paper, Box, Button } from "@mui/material";
 import Forecasts from "./components/Forecasts";
 import Login from "./components/Login";
-import { Endpoint, postRequest } from "./services/requests";
+import { getAuthToken } from "./services/utils";
 
 const darkTheme = createTheme({
   palette: {
@@ -13,22 +13,14 @@ const darkTheme = createTheme({
 function App() {
   // TODO: add router
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [token, setToken] = useState();
-  const handleLogin = useCallback(
-    async (username: string, password: string) => {
-      const { data, error } = await postRequest(
-        { password, username },
-        Endpoint.AUTHORIZE
-      );
-      if (error) {
-        // TODO
-        return;
-      }
+  const [token, setToken] = useState(getAuthToken());
+
+  const handleLogin = async (token: string) => {
+    if (token) {
       setIsUserLoggedIn(true);
-      return setToken(data.token);
-    },
-    []
-  );
+      setToken(token);
+    }
+  };
 
   const handleLogout = () => {
     setIsUserLoggedIn(false);
