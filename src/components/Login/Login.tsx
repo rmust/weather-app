@@ -1,27 +1,10 @@
-import { Box, Button, TextField } from "@mui/material";
-import { FC, useCallback, useRef } from "react";
-import { Endpoint, postRequest } from "../../services/requests";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import { FC, useState } from "react";
+import { useLogin } from "./useLogin";
 
-type LoginProps = {
-  onLogin: (token: string) => void;
-};
-
-const Login: FC<LoginProps> = ({ onLogin }) => {
-  const formRef = useRef<any>();
-
-  const handleClick = useCallback(async () => {
-    if (formRef?.current) {
-      const { username, password } = formRef.current;
-      const { data, error } = await postRequest(
-        { password: password.value, username: username.value },
-        Endpoint.AUTHORIZE
-      );
-      if (error) {
-        return;
-      }
-      onLogin(data?.token);
-    }
-  }, [onLogin]);
+const Login: FC = () => {
+  const [ref, setRef] = useState<HTMLFormElement | null>(null);
+  const login = useLogin(ref);
 
   return (
     <Box
@@ -33,7 +16,7 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
         height: "100vh",
       }}
     >
-      <form ref={formRef}>
+      <form ref={setRef}>
         <TextField name="username" label="Username" variant="outlined" />
         <Box mb={2} mt={2}>
           <TextField
@@ -44,8 +27,8 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
           />
         </Box>
       </form>
-      <Button onClick={handleClick} variant="contained">
-        Login
+      <Button onClick={login?.handleLogin} variant="contained">
+        {login?.isLoading ? <CircularProgress size={24.5} /> : "Login"}
       </Button>
     </Box>
   );
