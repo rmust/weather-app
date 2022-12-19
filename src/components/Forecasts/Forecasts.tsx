@@ -4,25 +4,40 @@ import {
   Button,
   CircularProgress,
   TextField,
+  Box,
 } from "@mui/material";
 import { useLogin } from "../Login/useLogin";
-import CityData from "./CityData";
+import Weather from "./Weather";
 import { useForecasts } from "./useForecasts";
+import ErrorToast from "../common/ErrorToast";
 
 const Forecasts: FC = () => {
   const { handleLogout } = useLogin(null);
-  const { handleChange, isLoading, cities, weather } = useForecasts();
+  const { handleChange, isLoading, cities, weather, error, setError } =
+    useForecasts();
 
   return (
-    <div>
-      <Button onClick={handleLogout}>Logout</Button>
+    <Box p={2}>
+      <Box mb={2}>
+        <Button onClick={handleLogout}>Logout</Button>
+      </Box>
+      <ErrorToast
+        onClose={() => setError(undefined)}
+        errorMessage={error?.message}
+      />
       <Autocomplete
         options={cities}
         renderInput={(params) => <TextField {...params} label="City" />}
         onChange={handleChange}
       />
-      {!isLoading ? <CityData weather={weather} /> : <CircularProgress />}
-    </div>
+      {!isLoading ? (
+        <Weather weather={weather} />
+      ) : (
+        <Box display="flex" justifyContent="center" m={2} width="100%">
+          <CircularProgress />
+        </Box>
+      )}
+    </Box>
   );
 };
 

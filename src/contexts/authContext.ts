@@ -1,8 +1,8 @@
 import {
   createContext,
+  useContext,
   SetStateAction,
   Dispatch,
-  useContext,
 } from "react";
 
 type AuthContextProps = {

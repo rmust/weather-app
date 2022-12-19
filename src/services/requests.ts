@@ -1,23 +1,15 @@
-export enum Endpoint {
-  AUTHORIZE = "authorize",
-  CITIES = "cities",
-  WEATHERS = "weathers",
-}
+import { Endpoint } from "./types";
+
+export const proxyUrl = "http://0.0.0.0:8080";
+export const baseApiUrl = "https://weather-api.isun.ch/api";
+
+export const getApiUrl = (endpoint: Endpoint | string) =>
+  `${proxyUrl}/${baseApiUrl}/${endpoint}`;
 
 const baseHeaders = new Headers({
   accept: "application/json",
   "content-type": "application/json",
 });
-
-const proxyUrl = "http://0.0.0.0:8080";
-const baseApiUrl = "https://weather-api.isun.ch/api";
-const getApiUrl = (endpoint: Endpoint | string) =>
-  `${proxyUrl}/${baseApiUrl}/${endpoint}`;
-
-export type ParsedError = {
-  status: number;
-  message: string;
-};
 
 const baseRequest = async (requestPromise: Promise<Response>) => {
   const request = await requestPromise;
@@ -30,7 +22,7 @@ const baseRequest = async (requestPromise: Promise<Response>) => {
   return { data };
 };
 
-export const postRequest = (body: any, endpoint: Endpoint) => {
+export const postRequest = <T>(body: T, endpoint: Endpoint) => {
   const requestPromise = fetch(getApiUrl(endpoint), {
     method: "post",
     headers: new Headers(baseHeaders),

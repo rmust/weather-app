@@ -1,3 +1,5 @@
+import { StorageKey } from "./types";
+
 export const getQueryParams = (query: string): string[] => {
   const url = new URL(window.location.href);
   const searchParams = new URLSearchParams(url.search);
@@ -6,9 +8,13 @@ export const getQueryParams = (query: string): string[] => {
 };
 
 export const getAuthToken = () => {
-  const authToken = localStorage.getItem("authToken");
-  if (authToken) {
-    return authToken;
+  const authToken = sessionStorage.getItem(StorageKey.AuthToken);
+  return authToken ? authToken : undefined;
+};
+
+export const setAuthToken = (authToken?: string) => {
+  if (!authToken) {
+    return sessionStorage.clear();
   }
-  return undefined;
+  return sessionStorage.setItem(StorageKey.AuthToken, authToken);
 };

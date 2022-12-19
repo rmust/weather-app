@@ -1,6 +1,6 @@
-import { Alert, Box, Button, CircularProgress, TextField } from "@mui/material";
-import { FC, useState } from "react";
-import LoginError from "./LoginError";
+import React, { FC, useState } from "react";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import ErrorToast from "../common/ErrorToast";
 import { useLogin } from "./useLogin";
 
 const Login: FC = () => {
@@ -9,7 +9,7 @@ const Login: FC = () => {
 
   return (
     <Box>
-      <LoginError
+      <ErrorToast
         onClose={() => setError(undefined)}
         errorMessage={error?.message}
       />
@@ -33,7 +33,10 @@ const Login: FC = () => {
             />
           </Box>
         </form>
-        <Button onClick={handleLogin} variant="contained">
+        <Button
+          onClick={handleLogin}
+          variant={isLoading ? "outlined" : "contained"}
+        >
           {isLoading ? <CircularProgress size={24.5} /> : "Login"}
         </Button>
       </Box>

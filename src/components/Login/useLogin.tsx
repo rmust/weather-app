@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import { ROUTE } from "../../routes";
-import { Endpoint, ParsedError, postRequest } from "../../services/requests";
+import { postRequest } from "../../services/requests";
+import { Endpoint, ParsedError } from "../../services/types";
+import { setAuthToken } from "../../services/utils";
 
 export const useLogin = (element: HTMLFormElement | null) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,10 @@ export const useLogin = (element: HTMLFormElement | null) => {
     setIsLoading(true);
 
     const { username, password } = element;
-    const { data, error: _error } = await postRequest(
+    const { data, error: _error } = await postRequest<{
+      password: string;
+      username: string;
+    }>(
       { password: password.value, username: username.value },
       Endpoint.AUTHORIZE
     );
@@ -30,7 +35,8 @@ export const useLogin = (element: HTMLFormElement | null) => {
       return setError(_error);
     }
 
-    setToken?.((_token) => {
+    setToken?.((_prevToken) => {
+      setAuthToken(data.token);
       navigateTo(ROUTE.Forecasts);
       return data.token;
     });
@@ -38,7 +44,10 @@ export const useLogin = (element: HTMLFormElement | null) => {
     setIsLoading(false);
   };
 
-  const handleLogout = () => setToken?.(undefined);
+  const handleLogout = () => {
+    setAuthToken();
+    setToken?.(undefined);
+  };
 
   return { handleLogout, handleLogin, isLoading, error, setError };
 };

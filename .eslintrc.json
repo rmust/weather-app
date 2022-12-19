@@ -16,6 +16,6 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "no-non-null-assertion": false
+    "no-empty-function": "off"
   }
 }

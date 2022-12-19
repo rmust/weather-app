@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { Navigate, Route, Routes } from "react-router-dom";
 import Forecasts from "../components/Forecasts";
 import Login from "../components/Login";
 import { ROUTE } from "./constants";
