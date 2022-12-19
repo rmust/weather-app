@@ -14,37 +14,44 @@ const baseApiUrl = "https://weather-api.isun.ch/api";
 const getApiUrl = (endpoint: Endpoint | string) =>
   `${proxyUrl}/${baseApiUrl}/${endpoint}`;
 
-export const postRequest = async (body: any, endpoint: Endpoint) => {
-  try {
-    const response = await fetch(getApiUrl(endpoint), {
-      method: "post",
-      headers: new Headers(baseHeaders),
-      body: JSON.stringify(body),
-    });
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+export type ParsedError = {
+  status: number;
+  message: string;
 };
 
-export const getRequest = async (
+const baseRequest = async (requestPromise: Promise<Response>) => {
+  const request = await requestPromise;
+  if (!request.ok) {
+    return {
+      error: { status: request.status, message: request.statusText },
+    };
+  }
+  const data = await request.json();
+  return { data };
+};
+
+export const postRequest = (body: any, endpoint: Endpoint) => {
+  const requestPromise = fetch(getApiUrl(endpoint), {
+    method: "post",
+    headers: new Headers(baseHeaders),
+    body: JSON.stringify(body),
+  });
+
+  return baseRequest(requestPromise);
+};
+
+export const getRequest = (
   endpoint: Endpoint | string,
   authToken: string,
   signal?: AbortSignal
 ) => {
-  try {
-    const response = await fetch(getApiUrl(endpoint), {
-      method: "GET",
-      headers: new Headers({
-        ...baseHeaders,
-        authorization: `Bearer ${authToken}`,
-      }),
-      signal,
-    });
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+  const requestPromise = fetch(getApiUrl(endpoint), {
+    method: "GET",
+    headers: new Headers({
+      ...baseHeaders,
+      authorization: `Bearer ${authToken}`,
+    }),
+    signal,
+  });
+  return baseRequest(requestPromise);
 };

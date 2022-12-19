@@ -1,6 +1,6 @@
+import React, { FC } from "react";
 import { Box, Typography } from "@mui/material";
-import { FC } from "react";
-import { Weather } from "./Forecasts";
+import { Weather } from "./types";
 
 type CityDataProps = {
   weather?: Weather;

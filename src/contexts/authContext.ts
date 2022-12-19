@@ -7,12 +7,12 @@ import {
 
 type AuthContextProps = {
   token?: string;
-  setToken: Dispatch<SetStateAction<string | undefined>>;
+  setToken?: Dispatch<SetStateAction<string | undefined>>;
 };
 
 export const AuthContext = createContext<AuthContextProps>({
   token: undefined,
-  setToken: () => {},
+  setToken: undefined,
 });
 
 export const useAuth = () => useContext(AuthContext);

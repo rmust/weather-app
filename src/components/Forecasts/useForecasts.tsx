@@ -2,14 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../contexts/authContext";
 import { Endpoint, getRequest } from "../../services/requests";
 import { getQueryParams } from "../../services/utils";
-
-export type Weather = {
-  city: string;
-  precipitation: number;
-  summary: "string";
-  temperature: number;
-  windSpeed: number;
-};
+import { Weather } from "./types";
 
 const FETCH_INTERVAL = 15000;
 
@@ -21,14 +14,15 @@ export const useForecasts = () => {
       return;
     }
     const controller = new AbortController();
-    getRequest(Endpoint.CITIES, token!, controller.signal).then(
-      ({ data, error }) => {
+    getRequest(Endpoint.CITIES, token!, controller.signal)
+      .then(({ data, error }) => {
         if (error) {
           return;
         }
         return setCities(data);
-      }
-    );
+      })
+      .catch(() => {});
+
     return () => {
       controller.abort();
     };
