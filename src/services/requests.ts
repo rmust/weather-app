@@ -6,10 +6,10 @@ export const baseApiUrl = "https://weather-api.isun.ch/api";
 export const getApiUrl = (endpoint: Endpoint | string) =>
   `${proxyUrl}/${baseApiUrl}/${endpoint}`;
 
-const baseHeaders = new Headers({
+const baseHeaders = {
   accept: "application/json",
   "content-type": "application/json",
-});
+};
 
 const baseRequest = async (requestPromise: Promise<Response>) => {
   const request = await requestPromise;
