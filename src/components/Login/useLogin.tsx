@@ -26,7 +26,7 @@ export const useLogin = (element: HTMLFormElement | null) => {
       password: string;
       username: string;
     }>(
-      { password: password.value, username: username.value },
+      { password: password?.value, username: username?.value },
       Endpoint.AUTHORIZE
     );
 
